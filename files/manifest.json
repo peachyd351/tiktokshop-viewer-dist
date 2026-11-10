@@ -1,0 +1,76 @@
+{
+  "manifest_version": 3,
+  "name": "TikTok Shop Clip Viewer",
+  "short_name": "TTS Viewer",
+  "version": "1.0.5",
+  "description": "Xem, tải và thống kê các clip TikTok Shop mà web TikTok không phát được, kèm số đã bán của sản phẩm.",
+  "minimum_chrome_version": "116",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": [
+    "storage",
+    "downloads",
+    "sidePanel",
+    "contextMenus",
+    "tabs",
+    "declarativeNetRequest",
+    "alarms"
+  ],
+  "host_permissions": [
+    "https://www.tiktok.com/*",
+    "https://*.tiktok.com/*",
+    "https://www.tikwm.com/*",
+    "https://api.douyin.wtf/*",
+    "https://api.tiklydown.eu.org/*",
+    "https://*.tiktokcdn.com/*",
+    "https://*.tiktokcdn-us.com/*",
+    "https://*.tiktokcdn-eu.com/*",
+    "https://raw.githubusercontent.com/*"
+  ],
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "TikTok Shop Clip Viewer"
+  },
+  "side_panel": {
+    "default_path": "ui/panel.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.tiktok.com/*"
+      ],
+      "js": [
+        "src/page.js"
+      ],
+      "world": "MAIN",
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://www.tiktok.com/*"
+      ],
+      "js": [
+        "src/content.js"
+      ],
+      "css": [
+        "src/content.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "mobile_ua",
+        "enabled": true,
+        "path": "rules/mobile_ua.json"
+      }
+    ]
+  }
+}

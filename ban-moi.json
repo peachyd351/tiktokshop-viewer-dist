@@ -1,7 +1,84 @@
 {
-  "version": "1.0.4",
-  "file": "tts-viewer-1.0.4.zip",
-  "sha256": "df1ba056e8470616951879a9be61e162c84125d9ab7304426a2e6d83550c8993",
-  "notes": "Clip Shop phát nhanh hơn (ưu tiên clip đang xem, lấy link sẵn khi rê chuột)\nẨn nút ▶ của lưới khi mở cửa sổ xem clip\nNhãn sản phẩm dời lên trên, không đè thanh thời gian",
+  "version": "1.0.5",
+  "file": "tts-viewer-1.0.5.zip",
+  "files": [
+    {
+      "path": "icons/icon128.png",
+      "sha256": "5e7c1fd377558d00b63c77bf09bd2b534de869631e05c5eb17bd81daee64ad13"
+    },
+    {
+      "path": "icons/icon16.png",
+      "sha256": "3dfaa7e50d01c60918a6ffc60c87a70e3398d2e92655f34a7c39f661ab543a35"
+    },
+    {
+      "path": "icons/icon48.png",
+      "sha256": "e18e53db3bed454187ff09f1aec254aa953547dfe3a1b2ffb67505689eacf327"
+    },
+    {
+      "path": "manifest.json",
+      "sha256": "a212d67667f77aaa5565d92d45546a57243e245e5f78d796fd83cab492ad2e04"
+    },
+    {
+      "path": "README.md",
+      "sha256": "87a1f3fd875561f33fd3170ca561c81b04da41095d93bfae7ddd1b37dc27105b"
+    },
+    {
+      "path": "rules/mobile_ua.json",
+      "sha256": "53fb7d28b9965cfddc50c05790453afd5b29ff24817073b34bb405230cef39f4"
+    },
+    {
+      "path": "src/background.js",
+      "sha256": "ad30de043fc2dbaf0b1335c30694d80679bcd0aae8d1a4fcb00fb78bfc2dfdb5"
+    },
+    {
+      "path": "src/content.css",
+      "sha256": "9749a921acaf11a8f2dd16b0bd09c73df4854938c06511a3588a73d8a948d970"
+    },
+    {
+      "path": "src/content.js",
+      "sha256": "064d87c6f68db2f34b24bbd09a3f8c1503ba909c42b97cbf58cf339e2046f430"
+    },
+    {
+      "path": "src/page.js",
+      "sha256": "87f24f38cb1ff325605efff4fc2349a881b844ff24944abb791101682daf49a1"
+    },
+    {
+      "path": "ui/common.js",
+      "sha256": "63a8469ae90ffda854333d47e2c71de0c7781b3ab35161ea2244e7a39dab4a86"
+    },
+    {
+      "path": "ui/panel.html",
+      "sha256": "e70ed5389123c856130d487cf3c1fd5d822d9de885be74f55f2984e78b625e6b"
+    },
+    {
+      "path": "ui/panel.js",
+      "sha256": "ecbbe88c487b0508d51c45115f1ec42442321cdad08ed221c043953f1de28315"
+    },
+    {
+      "path": "ui/player.html",
+      "sha256": "8be27ec8aa6a2681c4d6d3a9d2d1058c88a41147cd0d871cffbc238fa1bb629f"
+    },
+    {
+      "path": "ui/player.js",
+      "sha256": "c84dc8d1090de6c156730c48494ec579c6f1ac474eb4d86f3119af12078515e6"
+    },
+    {
+      "path": "ui/style.css",
+      "sha256": "0544238d2449b94944c27e53aab8466dbf6c2366dd8612a0cfb25aeb176dbd6f"
+    },
+    {
+      "path": "ui/update.html",
+      "sha256": "f3ed6475f84862149877d55e1856460efb9f0784618f8a2eceda7a8a8742821c"
+    },
+    {
+      "path": "ui/update.js",
+      "sha256": "13f266402f73e4155187c07a96fd6f26b386c23d5eb90375cbd0ed09eace8ab8"
+    },
+    {
+      "path": "ui/xlsx.js",
+      "sha256": "8ead1fe3211f5f68517043432d04569c41beac051794d93c16d4fd5c6c72143c"
+    }
+  ],
+  "notes": "Cập nhật tải từng file, không còn bị Windows Defender báo nhầm\nSide panel tự kiểm tra bản mới + nút Kiểm tra cập nhật",
   "date": "2026-11-10"
 }

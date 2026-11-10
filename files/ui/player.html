@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TTS Player</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="player">
+      <video id="video" controls autoplay playsinline></video>
+      <div id="gallery" class="gallery" hidden></div>
+      <section class="meta">
+        <div id="title" class="title"></div>
+        <div id="author" class="author"></div>
+        <div id="stats" class="stats"></div>
+        <div id="products" class="chips"></div>
+        <div class="row">
+          <button class="primary" id="dlBtn">⬇ Tải không logo</button>
+          <button id="dlWmBtn">⬇ Có logo</button>
+          <button id="openBtn">↗ TikTok</button>
+          <button id="copyBtn">📋 Link</button>
+          <button id="hirBtn" hidden title="Tên sản phẩm · ID · Link · Hashtag — dán vào ô Thông tin sản phẩm khi tạo job HIR-F">📦 Copy thông tin</button>
+        </div>
+        <div id="status" class="muted"></div>
+      </section>
+    </main>
+    <script type="module" src="player.js"></script>
+  </body>
+</html>

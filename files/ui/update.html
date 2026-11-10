@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cập nhật TTS Viewer</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .update {
+        max-width: 520px;
+        margin: 40px auto;
+        padding: 0 16px;
+        line-height: 1.5;
+      }
+      .ver {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 12px 0;
+      }
+      #notes {
+        white-space: pre-wrap;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        padding: 10px 12px;
+        margin: 12px 0;
+      }
+      .bar {
+        height: 6px;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .bar div {
+        height: 100%;
+        width: 0;
+        background: var(--accent);
+        transition: width 0.2s;
+      }
+      #status.ok {
+        color: #4ade80;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="update">
+      <h1>Cập nhật TikTok Shop Clip Viewer</h1>
+      <div class="ver"><span id="cur"></span> <span id="next"></span></div>
+      <div id="notes" hidden></div>
+      <div class="row">
+        <button class="primary" id="go" disabled>Đang kiểm tra…</button>
+        <button id="pick" title="Chọn lại thư mục extension đang cài">Chọn thư mục khác</button>
+      </div>
+      <div class="bar" hidden><div></div></div>
+      <div id="status" class="muted"></div>
+      <p class="muted" id="dir"></p>
+      <p class="muted">
+        Lần đầu: chọn đúng thư mục đã bấm “Load unpacked” (có file manifest.json) rồi bấm “Cho phép chỉnh sửa”. Các lần sau chỉ
+        cần bấm “Cập nhật ngay”.
+      </p>
+    </main>
+    <script type="module" src="update.js"></script>
+  </body>
+</html>

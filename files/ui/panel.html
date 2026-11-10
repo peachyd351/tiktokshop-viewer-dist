@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TTS Viewer</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="panel">
+      <h1>TikTok Shop Clip Viewer <span class="muted" id="version"></span> <button class="small" id="checkUpdateBtn" title="Mở trang cập nhật">Kiểm tra cập nhật</button></h1>
+      <div id="updateBar" class="update-bar" hidden>
+        <span id="updateText"></span>
+        <button class="primary" id="updateBtn">Cập nhật ngay</button>
+      </div>
+
+      <div id="inlinePlayer">
+        <button class="close" id="closePlayer" title="Đóng">✕</button>
+        <video id="video" controls autoplay playsinline></video>
+      </div>
+
+      <textarea id="input" placeholder="Dán link clip TikTok (mỗi dòng 1 link, nhận cả vt.tiktok.com)"></textarea>
+      <div class="row">
+        <button class="primary" id="addBtn">Thêm link</button>
+        <button id="collectBtn" title="Lấy mọi clip đang hiện trên tab TikTok">Gom clip trên trang</button>
+        <button id="scrollBtn" title="Tự cuộn trang kênh/hashtag đến hết rồi gom">Cuộn &amp; gom hết</button>
+      </div>
+      <div id="status" class="muted"></div>
+
+      <div class="toolbar">
+        <div class="row">
+          <label class="row"><input type="checkbox" id="checkAll" /> Tất cả</label>
+          <select id="sort" title="Sắp xếp">
+            <option value="addedAt">Mới thêm</option>
+            <option value="views">Lượt xem</option>
+            <option value="likes">Lượt thích</option>
+            <option value="shares">Chia sẻ</option>
+            <option value="saves">Lượt lưu</option>
+            <option value="created">Ngày đăng</option>
+          </select>
+          <select id="filter" title="Lọc">
+            <option value="all">Mọi clip</option>
+            <option value="shop">Có gắn sản phẩm</option>
+          </select>
+        </div>
+        <div class="row" style="margin-top: 6px">
+          <input type="search" id="search" placeholder="Tìm theo tiêu đề, kênh, sản phẩm" style="flex: 1; width: auto" />
+        </div>
+        <div class="row" style="margin-top: 6px">
+          <button id="dlBtn">⬇ Tải không logo</button>
+          <button id="dlWmBtn">⬇ Có logo</button>
+          <button id="csvBtn">Xuất Excel</button>
+          <button id="refreshBtn" title="Cập nhật số liệu mới">↻</button>
+          <button id="removeBtn" title="Xoá khỏi danh sách">🗑</button>
+        </div>
+      </div>
+
+      <div id="summary" class="muted"></div>
+      <div class="list" id="list"></div>
+    </main>
+    <script type="module" src="panel.js"></script>
+  </body>
+</html>
