@@ -1,7 +1,7 @@
 {
-  "version": "1.0.3",
-  "file": "tts-viewer-1.0.3.zip",
-  "sha256": "d217fe7e4354ce5aae1f3c7d680a6e7d78ed11090ad7bb3616d3654f29c9e6aa",
-  "notes": "Tự cập nhật bằng nút Cập nhật ngay\nCopy thông tin sản phẩm cho HIR-F\nSố đã bán, giá, đánh giá của sản phẩm",
-  "date": "2026-11-02"
+  "version": "1.0.4",
+  "file": "tts-viewer-1.0.4.zip",
+  "sha256": "df1ba056e8470616951879a9be61e162c84125d9ab7304426a2e6d83550c8993",
+  "notes": "Clip Shop phát nhanh hơn (ưu tiên clip đang xem, lấy link sẵn khi rê chuột)\nẨn nút ▶ của lưới khi mở cửa sổ xem clip\nNhãn sản phẩm dời lên trên, không đè thanh thời gian",
+  "date": "2026-11-10"
 }
