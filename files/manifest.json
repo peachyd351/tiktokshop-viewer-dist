@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "TikTok Shop Clip Viewer",
   "short_name": "TTS Viewer",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Xem, tải và thống kê các clip TikTok Shop mà web TikTok không phát được, kèm số đã bán của sản phẩm.",
   "minimum_chrome_version": "116",
   "icons": {

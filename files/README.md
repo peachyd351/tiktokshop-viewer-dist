@@ -29,14 +29,18 @@ lấy link CDN `*.tiktokcdn*.com` qua TikWM (CSP của TikTok cho phép domain n
 
 ## Cập nhật
 
-Chỉ cần "Load unpacked" 1 lần. Khi có bản mới, biểu tượng extension hiện chữ **MỚI** và side panel hiện thanh
-"Có bản mới": bấm **Cập nhật ngay** → lần đầu chọn đúng thư mục đã Load unpacked và bấm "Cho phép chỉnh sửa" →
-extension tự tải gói, ghi đè file, khởi động lại và tải lại các tab TikTok. Các lần sau chỉ cần bấm nút.
-Bấm số phiên bản cạnh tiêu đề side panel để mở trang cập nhật bất cứ lúc nào.
+Chỉ cần "Load unpacked" 1 lần. Khi có bản mới, biểu tượng extension hiện chữ **MỚI**, side panel hiện thanh
+"Có bản mới" (nút **Kiểm tra cập nhật** cạnh tiêu đề mở trang cập nhật). Cách cập nhật: mở thư mục cài, bấm đúp
+**`Cập nhật.bat`** → `scripts/cap-nhat.ps1` tải từng file từ GitHub, kiểm SHA-256, đủ hết mới chép (manifest.json
+cuối) → extension thấy manifest.json trên ổ đĩa đổi phiên bản (trang cập nhật kiểm tra mỗi 2 giây, background mỗi
+phút) và tự khởi động lại.
+
+Không để Chrome tự ghi file (File System Access): Windows Defender báo nhầm `ui/update.js` kiểu đó là
+`Trojan:Win32/Fauppod.A!cl` và xoá file.
 
 Phát hành (chỉ khi đã được đồng ý): tăng `version` trong `manifest.json` (1.0.x → 1.0.x+1) rồi chạy
-`python build/release.py "ghi chú"` — đóng gói zip + `ban-moi.json` và đẩy lên repo công khai
-`peachyd351/tiktokshop-viewer-dist` (clone ở `tools/tiktokshop-viewer-dist`).
+`python build/release.py "ghi chú"` — chép file vào `files/` + `ban-moi.json` (kèm zip để cài mới) và đẩy lên repo
+công khai `peachyd351/tiktokshop-viewer-dist` (clone ở `tools/tiktokshop-viewer-dist`).
 
 ## Sử dụng
 

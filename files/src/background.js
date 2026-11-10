@@ -53,10 +53,23 @@ async function checkUpdate() {
   return update;
 }
 
+// "Cập nhật.bat" chép file mới vào thư mục cài: Chrome đọc file từ ổ đĩa, nên manifest.json đọc lại
+// được mang phiên bản mới → khởi động lại extension để nạp code mới.
+async function diskVersion() {
+  const res = await fetch(`${chrome.runtime.getURL("manifest.json")}?t=${Date.now()}`, { cache: "no-store" });
+  return (await res.json()).version;
+}
+
+async function reloadIfUpdatedOnDisk() {
+  if ((await diskVersion()) !== chrome.runtime.getManifest().version) chrome.runtime.reload();
+}
+
 chrome.runtime.onStartup.addListener(() => checkUpdate().catch(() => {}));
 chrome.alarms.create("check-update", { delayInMinutes: 1, periodInMinutes: UPDATE_EVERY_MIN });
+chrome.alarms.create("disk-version", { periodInMinutes: 1 });
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === "check-update") checkUpdate().catch(() => {});
+  if (alarm.name === "disk-version") reloadIfUpdatedOnDisk().catch(() => {});
 });
 
 // ---------- Nhận dạng link ----------
@@ -557,6 +570,9 @@ const handlers = {
       if (update !== undefined) return { update };
     }
     return { update: await checkUpdate() };
+  },
+  async diskVersion() {
+    return { version: await diskVersion() };
   },
   async openUpdate() {
     await chrome.tabs.create({ url: chrome.runtime.getURL("ui/update.html") });
