@@ -5,7 +5,15 @@ const TIKWM_API = "https://www.tikwm.com/api/";
 const TIKWM_MEDIA = "https://www.tikwm.com/video/media";
 const MIN_GAP_MS = 1150; // TikWM miễn phí: 1 request / giây
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
-const PLAY_URL_TTL_MS = 45 * 60 * 1000;
+const PLAY_URL_TTL_MS = 45 * 60 * 1000; // khi link không ghi hạn
+
+// Link tiktokcdn có dạng /<32 hex>/<hạn unix dạng 8 hex>/video/...: dùng tới hạn thật (trừ 10 phút).
+function playUrlStale(clip) {
+  if (!clip.playUrl) return true;
+  const m = clip.playUrl.match(/\/[0-9a-f]{32}\/([0-9a-f]{8})\//);
+  if (m) return Date.now() / 1000 > parseInt(m[1], 16) - 600;
+  return Date.now() - clip.fetchedAt > PLAY_URL_TTL_MS;
+}
 
 chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(() => {});
 
@@ -544,7 +552,7 @@ const handlers = {
     let clip;
     try {
       clip = await resolveClip(input, { urgent });
-      if (!clip.playUrl || Date.now() - clip.fetchedAt > PLAY_URL_TTL_MS) clip = await resolveClip(input, { force: true, urgent });
+      if (playUrlStale(clip)) clip = await resolveClip(input, { force: true, urgent });
     } catch (err) {
       return fallbackPlayable(input, String(err?.message || err));
     }
@@ -554,7 +562,7 @@ const handlers = {
   // Lấy sẵn link phát trước khi clip hiện ra (rê chuột vào ô clip, vừa mở trang clip).
   async prefetch({ input, urgent }) {
     const clip = await resolveClip(input, { urgent });
-    if (!clip.playUrl || Date.now() - clip.fetchedAt > PLAY_URL_TTL_MS) await resolveClip(input, { force: true, urgent });
+    if (playUrlStale(clip)) await resolveClip(input, { force: true, urgent });
     return {};
   },
   async products({ input, refs, force }) {

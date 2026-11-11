@@ -1,6 +1,6 @@
 {
-  "version": "1.0.6",
-  "file": "tts-viewer-1.0.6.zip",
+  "version": "1.0.7",
+  "file": "tts-viewer-1.0.7.zip",
   "files": [
     {
       "path": "Cập nhật.bat",
@@ -20,7 +20,7 @@
     },
     {
       "path": "manifest.json",
-      "sha256": "478301642cf31bf63a617fe2115c088855bb8337f5b1b744fb7c4ebe2badc6e2"
+      "sha256": "3129a2be6abb4b7489aa3295933c9ad6ed81cf69df8705a3d9eb4a8d2ccf339c"
     },
     {
       "path": "README.md",
@@ -36,7 +36,7 @@
     },
     {
       "path": "src/background.js",
-      "sha256": "28fc936f41e45a45303ef4b028b7a273df9ccc03b1937a00bccbc327a25eaf45"
+      "sha256": "5bc37483a89e2bfc57415d20a3c38114c0d1b9d92438b5f3e668c041aeda7084"
     },
     {
       "path": "src/content.css",
@@ -44,11 +44,11 @@
     },
     {
       "path": "src/content.js",
-      "sha256": "064d87c6f68db2f34b24bbd09a3f8c1503ba909c42b97cbf58cf339e2046f430"
+      "sha256": "26c346478527b1ed6261a68830dff00da6a0c545ae7256ae769eeabff56f55f8"
     },
     {
       "path": "src/page.js",
-      "sha256": "87f24f38cb1ff325605efff4fc2349a881b844ff24944abb791101682daf49a1"
+      "sha256": "8201c876450e79dcf6537371b289af84e9a1333c1e0a4eab420864f1347c8d86"
     },
     {
       "path": "ui/common.js",
@@ -87,6 +87,6 @@
       "sha256": "8ead1fe3211f5f68517043432d04569c41beac051794d93c16d4fd5c6c72143c"
     }
   ],
-  "notes": "Cập nhật bằng file Cập nhật.bat trong thư mục extension\nExtension tự khởi động lại khi cập nhật xong",
-  "date": "2026-11-10"
+  "notes": "Clip Shop phát nhanh hơn: nạp trước video khi rê chuột, lấy sẵn link các clip đang hiện\nExtension tự khởi động lại sau khi chạy Cập nhật.bat",
+  "date": "2026-11-11"
 }

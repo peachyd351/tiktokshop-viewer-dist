@@ -87,7 +87,7 @@
     setTimeout(() => {
       pending = false;
       scan();
-    }, 300);
+    }, 150);
   }).observe(document.documentElement, { childList: true, subtree: true });
   scan();
 })();

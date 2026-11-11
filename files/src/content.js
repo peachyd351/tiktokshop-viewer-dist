@@ -46,10 +46,11 @@
       if (!a.querySelector("img, picture, video")) continue; // bỏ link chữ
       if (getComputedStyle(a).position === "static") a.style.position = "relative";
       a.appendChild(makeButton(a.href, "tts-btn-grid"));
-      // Rê chuột vào ô clip ~0,3 giây: lấy sẵn link phát, bấm mở là clip Shop phát ngay.
+      // Rê chuột vào ô clip ~0,25 giây: lấy link và nạp trước video, bấm mở là clip Shop phát ngay.
       let timer = 0;
-      a.addEventListener("mouseenter", () => (timer = setTimeout(() => prefetch(a.href, false), 300)));
+      a.addEventListener("mouseenter", () => (timer = setTimeout(() => warmUp(a.href, true), 250)));
       a.addEventListener("mouseleave", () => clearTimeout(timer));
+      gridSeen.observe(a);
     }
   }
 
@@ -59,6 +60,44 @@
     if (!id || prefetched.has(id)) return;
     prefetched.add(id);
     chrome.runtime.sendMessage({ type: "prefetch", input: url.split("?")[0], urgent }, () => void chrome.runtime.lastError);
+  }
+
+  // Ô clip hiện trên màn hình ~0,6 giây: lấy sẵn link (ưu tiên thấp, TikWM 1 lần/giây).
+  const gridTimers = new WeakMap();
+  const gridSeen = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) {
+        clearTimeout(gridTimers.get(e.target));
+        if (e.isIntersecting) gridTimers.set(e.target, setTimeout(() => prefetch(e.target.href, false), 600));
+      }
+    },
+    { threshold: 0.5 },
+  );
+
+  // Video nạp trước (chưa gắn vào trang): trình duyệt tải sẵn dữ liệu đầu clip, lúc mở chỉ việc gắn vào.
+  const warm = new Map(); // id -> { video, res }
+  const WARM_MAX = 4;
+  async function warmUp(url, urgent) {
+    const id = url.match(VIDEO_RE)?.[1];
+    if (!id || warm.has(id) || !/\/video\//.test(url)) return;
+    warm.set(id, null);
+    const res = await ask({ type: "playable", input: url.split("?")[0], urgent });
+    if (!res.ok || !res.src) return warm.delete(id);
+    const video = document.createElement("video");
+    Object.assign(video, { preload: "auto", playsInline: true, loop: true, controls: true, src: res.src });
+    warm.set(id, { video, res });
+    while (warm.size > WARM_MAX) {
+      const [oldId, old] = warm.entries().next().value;
+      old?.video.removeAttribute("src");
+      warm.delete(oldId);
+    }
+  }
+
+  function takeWarm(id) {
+    const entry = warm.get(id);
+    if (!entry) return null;
+    warm.delete(id);
+    return entry;
   }
 
   // Nút nổi khi đang mở một trang video.
@@ -74,7 +113,7 @@
     if (floatingFor === m[1] && existing) return;
     existing?.remove();
     floatingFor = m[1];
-    prefetch(location.href, true); // vừa mở clip: lấy link ngay, không chờ nhận diện khung phát
+    warmUp(location.href, true); // vừa mở clip: lấy link + nạp video ngay, không chờ nhận diện khung phát
     const btn = makeButton(location.href, "tts-btn-float");
     btn.textContent = "▶ Xem clip này";
     document.body.appendChild(btn);
@@ -277,7 +316,12 @@
         <button type="button" data-act="pop" title="Mở trình phát riêng">⧉</button>
       </div>
       <div class="tts-inline-msg">Đang tải clip…</div>`;
-    const video = box.querySelector("video");
+    let video = box.querySelector("video");
+    const warmed = takeWarm(id);
+    if (warmed) {
+      video.replaceWith(warmed.video);
+      video = warmed.video;
+    }
     if (section.dataset.ttsCover) video.poster = section.dataset.ttsCover;
     // Chặn click lan xuống TikTok (mở toàn màn hình / chuyển trang).
     for (const evt of ["click", "dblclick", "mousedown", "pointerdown"]) box.addEventListener(evt, (e) => e.stopPropagation());
@@ -299,7 +343,7 @@
     hideNative(section);
     io.observe(section);
 
-    const res = await ask({ type: "playable", input: clipUrl(section), urgent: visible.has(section) || !!section.dataset.ttsUnder });
+    const res = warmed?.res || (await ask({ type: "playable", input: clipUrl(section), urgent: visible.has(section) || !!section.dataset.ttsUnder }));
     if (box.dataset.id !== section.dataset.ttsId || !box.isConnected) return; // đã cuộn sang clip khác
     const msg = box.querySelector(".tts-inline-msg");
     if (!res.ok || !res.src) {
@@ -307,7 +351,7 @@
       return;
     }
     msg.remove();
-    video.src = res.src;
+    if (!warmed) video.src = res.src;
     video.onerror = () => {
       if (res.fallback && video.src !== res.fallback) video.src = res.fallback;
     };
