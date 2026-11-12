@@ -1,6 +1,6 @@
 {
-  "version": "1.0.8",
-  "file": "tts-viewer-1.0.8.zip",
+  "version": "1.0.9",
+  "file": "tts-viewer-1.0.9.zip",
   "files": [
     {
       "path": "Cập nhật.bat",
@@ -20,7 +20,7 @@
     },
     {
       "path": "manifest.json",
-      "sha256": "361e29cb67defc745776dea1faca5109ac323615961f40a6f883625e623a85a3"
+      "sha256": "7c410b8085e69ab3f806cb6640fcbbf30ba6be01020e8e2be732a292c13eea24"
     },
     {
       "path": "README.md",
@@ -40,11 +40,11 @@
     },
     {
       "path": "src/content.css",
-      "sha256": "9749a921acaf11a8f2dd16b0bd09c73df4854938c06511a3588a73d8a948d970"
+      "sha256": "79bfb3c2319b5d95a75c5b56235e45018c3d523edd708ec41c0d1c4e6f39b036"
     },
     {
       "path": "src/content.js",
-      "sha256": "c7ef4587fddfc39d566a9bb311a0d1de104cee132743b618b7ac63ed5aa7a310"
+      "sha256": "8f1390faff11735e15d5b3adf878a354284aa044af0b085413521d532369b5a3"
     },
     {
       "path": "src/hook.js",
@@ -91,6 +91,6 @@
       "sha256": "8ead1fe3211f5f68517043432d04569c41beac051794d93c16d4fd5c6c72143c"
     }
   ],
-  "notes": "Nạp trước clip Shop sắp tới trong feed, lướt tới là phát ngay",
+  "notes": "Sửa lỗi tự lướt gặp clip Shop bị lướt lặp và mất tiếng\nClip Shop hết thì sang clip kế, nhớ bật/tắt tiếng\nPhát hình trong hình (PiP) liền mạch, nút ▣ và ⏮ ⏭",
   "date": "2026-11-12"
 }

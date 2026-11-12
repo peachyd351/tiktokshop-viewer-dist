@@ -84,7 +84,7 @@
     const res = await ask({ type: "playable", input: url.split("?")[0], urgent });
     if (!res.ok || !res.src) return warm.delete(id);
     const video = document.createElement("video");
-    Object.assign(video, { preload: "auto", playsInline: true, loop: true, controls: true, src: res.src });
+    Object.assign(video, { preload: "auto", playsInline: true, controls: true, src: res.src });
     warm.set(id, { video, res });
     while (warm.size > WARM_MAX) {
       const [oldId, old] = warm.entries().next().value;
@@ -182,19 +182,138 @@
           if (video) startPlayback(video);
         } else {
           visible.delete(e.target);
-          video?.pause();
+          if (video !== document.pictureInPictureElement) video?.pause(); // đang ở PiP thì phát tiếp
         }
       }
     },
     { threshold: [0, 0.6] },
   );
 
+  // ---------- Phát hình trong hình (PiP) ----------
+  // Clip đang ở cửa sổ PiP: lướt qua không dừng, khung bị TikTok tái dùng thì chuyển video sang chỗ
+  // giữ tạm. Clip Shop kế tiếp hiện ra thì vào thẳng cửa sổ PiP; nút ⏮ ⏭ trong PiP chuyển clip feed.
+
+  function pipPark() {
+    let park = document.getElementById("tts-pip-park");
+    if (!park) {
+      park = document.createElement("div");
+      park.id = "tts-pip-park";
+      document.body.appendChild(park);
+    }
+    return park;
+  }
+
+  function stopVideo(video) {
+    video.pause();
+    video.removeAttribute("src");
+    video.load(); // dừng tải tiếp
+  }
+
+  async function togglePip(video) {
+    try {
+      if (document.pictureInPictureElement === video) await document.exitPictureInPicture();
+      else await video.requestPictureInPicture();
+    } catch (err) {
+      toast(`Không bật được hình trong hình: ${err.message}`);
+    }
+  }
+
+  // Đang PiP mà clip Shop khác vừa hiện ra: chuyển cửa sổ PiP sang clip đó.
+  async function followPip(video) {
+    const current = document.pictureInPictureElement;
+    if (!current || current === video) return;
+    try {
+      await video.requestPictureInPicture();
+    } catch {
+      // Trình duyệt không cho đổi phần tử PiP khi không có thao tác: phát clip mới ngay trong cửa sổ cũ
+      // (chỉ với video của extension; player của TikTok do TikTok quản lý).
+      if (!current.matches?.("[data-tts-own]")) return;
+      current.src = video.currentSrc || video.src;
+      current.play().catch(() => {});
+    }
+  }
+
+  function clickFeed(dir) {
+    const sel = dir > 0
+      ? '[data-e2e="feed-navigation-next"], [data-e2e="arrow-right"]'
+      : '[data-e2e="feed-navigation-prev"], [data-e2e="arrow-left"]';
+    document.querySelector(sel)?.click();
+  }
+
+  function mediaKeys() {
+    try {
+      navigator.mediaSession.setActionHandler("nexttrack", () => clickFeed(1));
+      navigator.mediaSession.setActionHandler("previoustrack", () => clickFeed(-1));
+    } catch {}
+  }
+
+  const ownVideoOf = (el) => el?.closest?.("[data-tts-blocked]")?.querySelector(":scope > .tts-inline video");
+
+  // Bấm PiP của TikTok trên clip Shop (player gốc trống) → mở PiP bằng video của extension.
+  document.addEventListener(
+    "enterpictureinpicture",
+    (e) => {
+      const own = !e.target.matches("[data-tts-own]") && ownVideoOf(e.target);
+      if (own) own.requestPictureInPicture().catch(() => {});
+    },
+    true,
+  );
+
+  // Đang PiP bằng video extension mà lướt tới clip thường: chuyển PiP sang player của TikTok.
+  document.addEventListener(
+    "playing",
+    (e) => {
+      const v = e.target;
+      const current = document.pictureInPictureElement;
+      if (!current?.matches?.("[data-tts-own]") || v.matches("[data-tts-own]") || !v.currentSrc) return;
+      if (ownVideoOf(v)) return;
+      v.requestPictureInPicture().catch(() => {});
+    },
+    true,
+  );
+
+  document.addEventListener(
+    "leavepictureinpicture",
+    (e) => {
+      if (e.target.parentElement?.id === "tts-pip-park") {
+        stopVideo(e.target);
+        e.target.remove();
+      }
+    },
+    true,
+  );
+
+  // Nhớ người dùng đang bật hay tắt tiếng (đổi trên thanh điều khiển của clip Shop) để clip sau theo.
+  let soundOn = true;
+  let settingMute = false;
+  function setMuted(video, muted) {
+    settingMute = true;
+    video.muted = muted;
+    settingMute = false;
+  }
+
+  function prepareVideo(video) {
+    if (video.dataset.ttsReady) return;
+    video.dataset.ttsReady = "1";
+    video.addEventListener("volumechange", () => {
+      if (!settingMute) soundOn = !video.muted;
+    });
+    // Hết clip: sang clip kế tiếp (không lặp lại).
+    video.addEventListener("ended", () => {
+      if (document.pictureInPictureElement === video || visible.has(video.closest(".tts-inline")?.parentElement)) clickFeed(1);
+    });
+  }
+
   function startPlayback(video) {
     if (!video.src) return;
+    prepareVideo(video);
+    mediaKeys();
+    followPip(video);
+    setMuted(video, !soundOn);
     video.play().catch((err) => {
       if (err?.name !== "NotAllowedError") return;
-      // Chưa có tương tác người dùng thì trình duyệt chỉ cho phát khi tắt tiếng.
-      video.muted = true;
+      // Chưa bấm/gõ gì trên trang (lăn chuột không tính) thì trình duyệt chỉ cho phát khi tắt tiếng.
+      setMuted(video, true);
       video.play().catch(() => {});
       askForSound(video);
     });
@@ -214,38 +333,38 @@
       document.removeEventListener("keydown", unmute, true);
       badge.remove();
       if (!video.isConnected) return;
-      video.muted = false;
-      video.play().catch(() => (video.muted = true));
+      soundOn = true;
+      setMuted(video, false);
+      video.play().catch(() => setMuted(video, true));
     };
     document.addEventListener("pointerdown", unmute, true);
     document.addEventListener("keydown", unmute, true);
   }
 
-  // Ẩn player gốc của TikTok (không xoá vì React quản lý node này) và giữ nó im lặng.
-  function hideNative(section) {
-    for (const v of section.querySelectorAll("video")) {
-      if (v.closest(".tts-inline")) continue;
-      v.pause();
-      v.muted = true;
-      v.style.visibility = "hidden";
-      v.dataset.ttsHidden = "1";
-    }
+  // Không đụng vào player của TikTok (TikTok dùng chung 1 player cho mọi clip: tắt tiếng / dừng nó thì
+  // clip thường phía sau cũng bị tắt tiếng, chế độ tự lướt bị rối). Lớp phát của extension che kín bên trên.
+  // Player trống của clip Shop báo lỗi / "hết clip" ngay → tự lướt của TikTok tưởng đã xem xong và lướt đi:
+  // chặn các tín hiệu đó; extension tự sang clip kế khi clip Shop phát hết.
+  for (const type of ["ended", "error"]) {
+    window.addEventListener(
+      type,
+      (e) => {
+        const v = e.target;
+        if (v instanceof HTMLVideoElement && !v.matches("[data-tts-own]") && v.closest("[data-tts-blocked]")?.querySelector(":scope > .tts-inline")) {
+          e.stopImmediatePropagation();
+        }
+      },
+      true,
+    );
   }
 
   function unmount(box) {
     const section = box.parentElement;
     const video = box.querySelector("video");
-    if (video) {
-      video.pause();
-      video.removeAttribute("src");
-      video.load(); // dừng tải tiếp
-    }
+    if (video && video === document.pictureInPictureElement) pipPark().appendChild(video);
+    else if (video) stopVideo(video);
     box.remove();
     section?.classList.remove("tts-host-under");
-    section?.querySelectorAll("video[data-tts-hidden]").forEach((v) => {
-      v.style.visibility = "";
-      delete v.dataset.ttsHidden;
-    });
   }
 
   function ask(msg) {
@@ -316,17 +435,18 @@
   async function mountInline(section) {
     const id = section.dataset.ttsId;
     let box = section.querySelector(":scope > .tts-inline");
-    if (box?.dataset.id === id) return hideNative(section);
+    if (box?.dataset.id === id) return;
     if (box) unmount(box);
 
     box = document.createElement("div");
     box.className = "tts-inline";
     box.dataset.id = id;
     box.innerHTML = `
-      <video playsinline loop controls preload="auto"></video>
+      <video playsinline controls preload="auto"></video>
       <div class="tts-inline-bar">
         <span class="tts-inline-tag">${section.dataset.ttsShop ? "🛒 Clip Shop" : "Clip bị chặn"} · TTS Viewer</span>
         <button type="button" data-act="dl" title="Tải không logo">⬇</button>
+        <button type="button" data-act="pip" title="Phát hình trong hình">▣</button>
         <button type="button" data-act="pop" title="Mở trình phát riêng">⧉</button>
       </div>
       <div class="tts-inline-msg">Đang tải clip…</div>`;
@@ -342,6 +462,8 @@
     box.querySelector('[data-act="dl"]').addEventListener("click", () =>
       chrome.runtime.sendMessage({ type: "download", ids: [id], quality: "hd" }, (res) => toast(res?.ok ? "Đã bắt đầu tải" : res?.error || "Lỗi tải")),
     );
+    video.dataset.ttsOwn = "1";
+    box.querySelector('[data-act="pip"]').addEventListener("click", () => togglePip(video));
     box.querySelector('[data-act="pop"]').addEventListener("click", () => {
       video.pause();
       play(id);
@@ -354,7 +476,8 @@
     } else {
       section.appendChild(box);
     }
-    hideNative(section);
+    // Player gốc còn nguồn của clip trước thì dừng 1 lần cho khỏi chồng tiếng (không tắt tiếng nó).
+    for (const v of section.querySelectorAll("video:not([data-tts-own])")) if (v.currentSrc && !v.paused) v.pause();
     io.observe(section);
 
     const res = warmed?.res || (await ask({ type: "playable", input: clipUrl(section), urgent: visible.has(section) || !!section.dataset.ttsUnder }));
