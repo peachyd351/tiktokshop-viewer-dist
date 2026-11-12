@@ -1,6 +1,6 @@
 {
-  "version": "1.0.7",
-  "file": "tts-viewer-1.0.7.zip",
+  "version": "1.0.8",
+  "file": "tts-viewer-1.0.8.zip",
   "files": [
     {
       "path": "Cập nhật.bat",
@@ -20,7 +20,7 @@
     },
     {
       "path": "manifest.json",
-      "sha256": "3129a2be6abb4b7489aa3295933c9ad6ed81cf69df8705a3d9eb4a8d2ccf339c"
+      "sha256": "361e29cb67defc745776dea1faca5109ac323615961f40a6f883625e623a85a3"
     },
     {
       "path": "README.md",
@@ -44,7 +44,11 @@
     },
     {
       "path": "src/content.js",
-      "sha256": "26c346478527b1ed6261a68830dff00da6a0c545ae7256ae769eeabff56f55f8"
+      "sha256": "c7ef4587fddfc39d566a9bb311a0d1de104cee132743b618b7ac63ed5aa7a310"
+    },
+    {
+      "path": "src/hook.js",
+      "sha256": "aaa54f22919e6826356ae39ac011c4313a11214974553e2c182f4c2d61dd7fda"
     },
     {
       "path": "src/page.js",
@@ -87,6 +91,6 @@
       "sha256": "8ead1fe3211f5f68517043432d04569c41beac051794d93c16d4fd5c6c72143c"
     }
   ],
-  "notes": "Clip Shop phát nhanh hơn: nạp trước video khi rê chuột, lấy sẵn link các clip đang hiện\nExtension tự khởi động lại sau khi chạy Cập nhật.bat",
-  "date": "2026-11-11"
+  "notes": "Nạp trước clip Shop sắp tới trong feed, lướt tới là phát ngay",
+  "date": "2026-11-12"
 }

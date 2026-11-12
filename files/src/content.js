@@ -93,6 +93,20 @@
     }
   }
 
+  // hook.js báo các clip Shop TikTok vừa tải sẵn phía trước: lấy link (ưu tiên thấp) và nạp trước
+  // video 2 clip gần nhất, lướt tới là phát ngay.
+  const WARM_AHEAD = 2;
+  function prepareAhead(items) {
+    items.forEach(({ id, author }, i) => {
+      const url = `https://www.tiktok.com/@${author || "i"}/video/${id}`;
+      if (i < WARM_AHEAD) warmUp(url, false);
+      else prefetch(url, false);
+    });
+  }
+  window.addEventListener("message", (e) => {
+    if (e.source === window && e.data?.__tts === "blocked-items") prepareAhead(e.data.items);
+  });
+
   function takeWarm(id) {
     const entry = warm.get(id);
     if (!entry) return null;
@@ -389,4 +403,12 @@
     }, 400);
   }).observe(document.documentElement, { childList: true, subtree: true });
   refresh();
+
+  // Danh sách hook.js nhận được trước khi content script chạy.
+  const root = document.documentElement;
+  root.dataset.ttsReady = "1";
+  try {
+    prepareAhead(JSON.parse(root.dataset.ttsPending || "[]"));
+  } catch {}
+  delete root.dataset.ttsPending;
 })();
